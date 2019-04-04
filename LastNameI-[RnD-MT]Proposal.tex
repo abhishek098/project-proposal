@@ -44,6 +44,14 @@
 
 \chapter{Introduction}
 \begin{itemize}
+	\item In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment.
+	\item Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment.
+	\item Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. 
+	\item If we can model the environment and constraints on the motion of the robot, we can drastically reduce the number of parameters to be learn to achieve the task.
+	\item Use of reinforcement learning to learn these reduced number of parameters can result in near optimal policy for achieving the task.
+	\item 
+\end{itemize}
+\begin{itemize}
     \item Manipulation tasks imply complex contact interactions with an unstructured environment and require a controller that is able to handle force interactions in a meaningful way \cite{kalakrishnan2011learning}.
     \item planning algorithms would require precise dynamics models of the resulting contact interactions. These models are usually unavailable, or so im- precise that the generated plans are unusable\cite{kalakrishnan2011learning}.
     \item A lot of times humans manipulate objects by dragging them on the surface from one place to another. This saves energy because we don't have to lift and place the object. Robots can do the same. 
