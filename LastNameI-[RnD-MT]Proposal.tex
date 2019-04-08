@@ -43,8 +43,20 @@
 \end{itemize}
 
 \chapter{Introduction}
+Most of the real world robotic manipulation task present the need for compliant manipulation, where robot needs to respond to the contact forces while executing the task. Classical planning and control algorithm fail to perform satisfactorily due to the lack of precise model of contact forces and high computational complexity. Various approaches have been proposed to learn compliant manipulation skills with help of Reinforcement Learning (RL). RL, in theory, is very promising when it comes to learn intelligent behaviors in complex environment with high dimensions. But it requires high number of interactions with environment. In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. Model based RL provide the solution to the problem of required high number of interactions with the environment by modeling some part of environment and motions policy. 
+
+On the other hand, task specification approaches like iTasc rely on instantaneous task specification in task frame where constraint on motion are specified in each direction. Such approaches are more practical because of less number of robot interactions and deterministic nature. But some parameters in this case need to be tuned manually which is tedious task and require number of human interventions. 
+Kalakrishnan et. al. in \cite{kalakrishnan2011learning} propose a control algorithm by joint RL with intelligent control which learns force policy to open door on top of the specified motion for unlatching and opening opening operation.
+We propose to extend above mentioned work by using task specification like iTask and using RL for searching parameters good enough for executing the task. Our approach combines the features from model based manipulation solutions and RL. We propose to bring together the feature of deterministic solution from model based control solutions and self learning capability from RL in one solution.  
 \begin{itemize}
-	\item In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment.
+	\item ItaSc and limitations
+	\item RL and limitations
+	\item model based RL
+	\item propose the solution
+	\item identify switching between primitive policies  
+\end{itemize}
+\begin{itemize}
+	\item In model free reinforcement learning, an agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment.
 	\item Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment.
 	\item Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. 
 	\item If we can model the environment and constraints on the motion of the robot, we can drastically reduce the number of parameters to be learn to achieve the task.
@@ -63,13 +75,14 @@
 
 \section{Problem Statement}
 \begin{itemize}
-    \item What are you going to solve?
-    \item How are you evaluating?
+    \item We propose to create framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
+    \item We will evaluate our approach based by learning a demo task of opening door. We will evaluate it on the basis of number of interactions needed with environment, deterministic .
 \end{itemize}
 
 
 \chapter{Related Work}
 \begin{itemize}
+	\item 
     \item What have other people done?
     \item Why is it not sufficient?
 \end{itemize}
@@ -77,7 +90,41 @@
 \section{Section 1}
 \section{Section 2}
 
+\chapter{Proposed Solution}
 
+We plan to solve a compliant manipulation task by providing model of the environment and then tuning the task parameters with the help of re-reinforcement learning.
+
+Examples of task modeling: 
+
+\begin{lstlisting}
+
+open_door
+{
+	f_x = f($\Theta$(environment, robot, task))
+	v_y = $v$
+	max_acc = $a_{max}$
+	max_dec = $a_{dec}$
+}until(f(...))
+
+\end{lstlisting}
+
+
+\begin{lstlisting}
+
+assist_human_to_carry
+{
+	f_x = f($\Theta$(environment, robot, task))
+	v_x = g1(ft_sensor_measurement)
+	v_y = g2(ft_sensor_measurement)
+	v_z = g3(ft_sensor_measurement)
+	damping_x = C1
+	damping_y = C1
+	damping_z = C1
+}until(f2(...))
+
+\end{lstlisting}
+
+Above task specification has the parameters which needs to be tuned either manually or automatically. These parameters will be tuned with model based RL.
 
 \chapter{Project Plan}
 
