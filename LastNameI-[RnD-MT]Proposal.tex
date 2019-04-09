@@ -7,6 +7,24 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{%
+	\parbox{\textwidth}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}\vskip-4pt}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{frame=lrb,xleftmargin=\fboxsep,xrightmargin=-\fboxsep}
+
+\lstset{
+	% numbers=left,
+	breaklines=true,
+	% backgroundcolor=\color{light-gray},
+	tabsize=4,
+	% basicstyle=\ttfamily,
+	literate={\ \ }{{\ }}1	
+}
+
 \title{Project Proposal Title}
 \author{Abhishek Padalkar}
 \supervisors{First Supervisor\\Alex Mitrevsky \\ Third Supervisor}
@@ -81,14 +99,77 @@ We propose to extend above mentioned work by using task specification like iTask
 
 
 \chapter{Related Work}
+
+
+
 \begin{itemize}
 	\item 
     \item What have other people done?
     \item Why is it not sufficient?
 \end{itemize}
 
-\section{Section 1}
-\section{Section 2}
+\section{Door Opening}
+
+Opening door is one the most important task for service and rescue robots. Number of studies have been conducted to investigate this challenging problem using different techniques. Number of approaches rely on detail geometric modeling of the door and analytical trajectory generation. Nagatani et.al. \cite{nagatani1995experiment} presented an early approach for opening door by modeling the geometry of the door and then synthesizing trajectory to open door by considering geometrical constraints. To cope with the errors in position control of the early days manipulator used in the experiment, they used a force torque sensor module to achieve compliance with the environment. But this approach highly relies on correct geometric model and accurate execution of designed trajectories.
+
+Approaches presented in \cite{levihn2014using,karayiannidis2012adaptive,niemeyer1997simple} use adaptive control algorithms which synthesize the motion by identifying the environmental constraints. In \cite{karayiannidis2012adaptive}, authors proposed to find the radial direction based on force and torque readings. Door is opened by applying velocity in radial direction. This method is prone to failure in case of uncertain grasp position. Also it considers only the case where door is already unlatched. 
+
+Some of the methods for door opening motor primitives like Dynamic motion primitives for generating trajectories for opening door. 
+
+\section{Task specification and motion synthesis}
+
+In industrial settings, task are usually specified in the form of sequence of primitives \cite{leidner2017cognitive}. These primitives mostly contain point-to-point motion, motion to to some default configuration. For example, following script taken from FRI interface examples shows the example motion primitives as shown in \ref{KRL-sample}.
+
+\begin{lstlisting}[label=KRL-sample,caption=KRL code]
+	INI
+	PTP HOME ; go to HOME joint configuration
+	LIN P1   ; linear motion to point P1
+	LIN P2	 ; linear motion to point P1
+\end{lstlisting}
+
+In \cite{leidner2017cognitive}, Leidner presented a representation in the form of action templates describing robot action using symbolic representations and geometric process model as shown in \ref{a-template}.  
+
+\begin{lstlisting}[label=a-template,caption=Action Template: \_object.pick]
+I Symbolic Representation 
+
+'''
+(:action _object.pick: 
+	:parameters (?o - _object ?m - _manipulator ?s - _surface) 
+	:precondition (and(free ?m) (on ?o ?s)) 
+	:effect (and(bound ?o ?m) (not(free ?m)) (not(on ?o ?s)))
+) 
+''' 
+
+II Geometric Representation
+
+def pick(self, manipulator, surface):
+	''' approach, grasp, and lift an object from a surface '''
+
+	graspset = odb.get_property(self.type, 'graspset', manipulator) 
+	for grasp_candidate in graspset: 
+		if grasp_candidate in self.history: 
+		continue
+		self.history.append(candidate) 
+		grasp = grasp_candidate 
+		break
+
+		if grasp is None: 
+			raise RuntimeError('no more alternatives')
+		else: 
+			self.grasp = grasp
+	operations = [
+		('move_hand', manipulator, g.approach_grasp), 
+		('plan_to_frame', manipulator, g.approach_frame, self.frame), ('plan_to_frame', manipulator, g.grasp_frame, self.frame), 
+		('bind', manipulator, self.name), 
+		('move_hand', manipulator, g.pre_grasp), 
+		('move_hand', manipulator, g.grasp), 
+		('move_straight', manipulator, txyz(0, 0, 0.1))
+	] 
+return operations
+\end{lstlisting}
+
+iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering robot model and provided constraints in the environment. 
+
 
 \chapter{Proposed Solution}
 
@@ -96,8 +177,7 @@ We plan to solve a compliant manipulation task by providing model of the environ
 
 Examples of task modeling: 
 
-\begin{lstlisting}
-
+\begin{lstlisting}[label=open_door_ts,caption=Task specification for opening door]
 open_door
 {
 	f_x = f($\Theta$(environment, robot, task))
@@ -109,7 +189,7 @@ open_door
 \end{lstlisting}
 
 
-\begin{lstlisting}
+\begin{lstlisting}[label=assist_ts,caption=Task specification for assisting human]
 
 assist_human_to_carry
 {
