@@ -93,7 +93,7 @@ We propose to extend above mentioned work by using task specification like iTask
 
 \section{Problem Statement}
 \begin{itemize}
-    \item We propose to create framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
+    \item We propose to create a framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
     \item We will evaluate our approach based by learning a demo task of opening door. We will evaluate it on the basis of number of interactions needed with environment, deterministic .
 \end{itemize}
 
@@ -101,20 +101,13 @@ We propose to extend above mentioned work by using task specification like iTask
 \chapter{Related Work}
 
 
-
-\begin{itemize}
-	\item 
-    \item What have other people done?
-    \item Why is it not sufficient?
-\end{itemize}
-
 \section{Door Opening}
 
 Opening door is one the most important task for service and rescue robots. Number of studies have been conducted to investigate this challenging problem using different techniques. Number of approaches rely on detail geometric modeling of the door and analytical trajectory generation. Nagatani et.al. \cite{nagatani1995experiment} presented an early approach for opening door by modeling the geometry of the door and then synthesizing trajectory to open door by considering geometrical constraints. To cope with the errors in position control of the early days manipulator used in the experiment, they used a force torque sensor module to achieve compliance with the environment. But this approach highly relies on correct geometric model and accurate execution of designed trajectories.
 
 Approaches presented in \cite{levihn2014using,karayiannidis2012adaptive,niemeyer1997simple} use adaptive control algorithms which synthesize the motion by identifying the environmental constraints. In \cite{karayiannidis2012adaptive}, authors proposed to find the radial direction based on force and torque readings. Door is opened by applying velocity in radial direction. This method is prone to failure in case of uncertain grasp position. Also it considers only the case where door is already unlatched. 
 
-Some of the methods for door opening motor primitives like Dynamic motion primitives for generating trajectories for opening door. 
+Some of the methods for door opening motor primitives like Dynamic motion primitives for generating trajectories for opening door. Disadvantage of these approaches is that we need to know the goal pose to generate trajectory hence it confines the condition of completing the task to achieving a goal pose. 
 
 \section{Task specification and motion synthesis}
 
