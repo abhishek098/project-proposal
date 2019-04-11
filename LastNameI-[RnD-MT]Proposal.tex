@@ -38,28 +38,6 @@
 
 \pagestyle{plain}
 
-\chapter{Draft}
-
-\section{Ideas}
-\begin{itemize}
-	\item Use model, demonstration and reinforcement in one approach.
-	\begin{itemize}
-		\item Model the constraints on the task
-		\item learn DMP and modify it for the constraints
-		\item optimize and tune it using reinforcement
-	\end{itemize}
-	\item Generalize for door opening, sweeping floor, cleaning blackboard and manipulating objects by dragging.
-\end{itemize}
-
-\section{Use Cases}
-\begin{itemize}
-	\item Opening door
-	\item Sweeping floor
-	\item Cleaning whiteboard
-	\item Cleaning window or any flat surface
-	\item Object manipulation by dragging
-\end{itemize}
-
 \chapter{Introduction}
 Most of the real world robotic manipulation task present the need for compliant manipulation, where robot needs to respond to the contact forces while executing the task. Classical planning and control algorithm fail to perform satisfactorily due to the lack of precise model of contact forces and high computational complexity. Various approaches have been proposed to learn compliant manipulation skills with help of Reinforcement Learning (RL). RL, in theory, is very promising when it comes to learn intelligent behaviors in complex environment with high dimensions. But it requires high number of interactions with environment. In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. Model based RL provide the solution to the problem of required high number of interactions with the environment by modeling some part of environment and motions policy. 
 
@@ -71,7 +49,6 @@ We propose to extend above mentioned work by using task specification like iTask
 	\item RL and limitations
 	\item model based RL
 	\item propose the solution
-	\item identify switching between primitive policies  
 \end{itemize}
 \begin{itemize}
 	\item In model free reinforcement learning, an agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment.
@@ -99,6 +76,73 @@ We propose to extend above mentioned work by using task specification like iTask
 
 
 \chapter{Related Work}
+\section{Task specification}
+In industrial settings, task are usually specified in the form of sequence of primitives \cite{leidner2017cognitive}. These primitives mostly contain point-to-point motion, motion to some default configuration and basic curves. For example, following script taken from FRI interface examples shows the example motion primitives as shown in listing \ref{KRL-sample}. Though this kind of task specification works in controlled industrial environment, it leaves very little scope for external sensory feedback and the task needs to specified in terms of positional goals.
+
+\begin{lstlisting}[label=KRL-sample,caption=KRL code]
+INI
+PTP HOME ; go to HOME joint configuration
+LIN P1   ; linear motion to point P1
+LIN P2	 ; linear motion to point P2
+\end{lstlisting}
+
+In \cite{leidner2017cognitive}, Leidner presented a representation in the form of action templates describing robot action using symbolic representations and geometric process model as shown in listing \ref{a-template}.  Symbolic representation of the task in PDDL allows classical planners to consider the action in the high level abstract task plan and geometric representation of the task specifies the sequence of low level movement sequences needed to complete the action. Here, geometric representation only specifies discrete motion primitives and not the parametric representation of the motion primitives. Actual parameterization and control is left to low level control module.   
+
+\begin{lstlisting}[label=a-template,caption=Action Template: \_object.pick]
+I Symbolic Representation 
+
+'''
+(:action _object.pick: 
+:parameters (?o - _object ?m - _manipulator ?s - _surface) 
+:precondition (and(free ?m) (on ?o ?s)) 
+:effect (and(bound ?o ?m) (not(free ?m)) (not(on ?o ?s)))
+) 
+''' 
+
+II Geometric Representation
+
+def pick(self, manipulator, surface):
+''' approach, grasp, and lift an object from a surface '''
+
+graspset = odb.get_property(self.type, 'graspset', manipulator) 
+for grasp_candidate in graspset: 
+if grasp_candidate in self.history: 
+continue
+self.history.append(candidate) 
+grasp = grasp_candidate 
+break
+
+if grasp is None: 
+raise RuntimeError('no more alternatives')
+else: 
+self.grasp = grasp
+operations = [
+('move_hand', manipulator, g.approach_grasp), 
+('plan_to_frame', manipulator, g.approach_frame, self.frame), ('plan_to_frame', manipulator, g.grasp_frame, self.frame), 
+('bind', manipulator, self.name), 
+('move_hand', manipulator, g.pre_grasp), 
+('move_hand', manipulator, g.grasp), 
+('move_straight', manipulator, txyz(0, 0, 0.1))
+] 
+return operations
+\end{lstlisting}
+
+In \cite{mason1981compliance}, Mason et. al. presented the idea behind \textit{Task Frame Formalization - TFF} for representing compliant task. Using hybrid control, various control modes are assigned to each axis of the \textit{task frame} or \textit{compliance frame}\cite{nagele2018prototype}. Listing \ref{tff} shows Open Door task taken from \cite{bruyninckx1996specification}. This framework doesn't consider the specification of task or motion quality related parameters like velocity damping or instantaneous sensory inputs. It also specify action to executed \textit{compliantly} but does not specify the how? 
+
+\begin{lstlisting}[label=tff,caption=Task Specification using TFF: Open Door]
+move compliantly {
+	with task frame directions
+	xt: force 0 N
+	yt: force 0 N
+	zt: velocity v mm/sec
+	axt: force 0 Nmm
+	ayt: force 0 Nmm
+	azt: force 0 Nmm
+} until distance > d mm 
+\end{lstlisting}
+
+
+iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering provided constraints in the environment. In case of conflicting constraints, constraints are weighted in the optimization problem.  
 
 
 \section{Door Opening}
@@ -108,60 +152,6 @@ Opening door is one the most important task for service and rescue robots. Numbe
 Approaches presented in \cite{levihn2014using,karayiannidis2012adaptive,niemeyer1997simple} use adaptive control algorithms which synthesize the motion by identifying the environmental constraints. In \cite{karayiannidis2012adaptive}, authors proposed to find the radial direction based on force and torque readings. Door is opened by applying velocity in radial direction. This method is prone to failure in case of uncertain grasp position. Also it considers only the case where door is already unlatched. 
 
 Some of the methods for door opening motor primitives like Dynamic motion primitives for generating trajectories for opening door. Disadvantage of these approaches is that we need to know the goal pose to generate trajectory hence it confines the condition of completing the task to achieving a goal pose. 
-
-\section{Task specification and motion synthesis}
-
-In industrial settings, task are usually specified in the form of sequence of primitives \cite{leidner2017cognitive}. These primitives mostly contain point-to-point motion, motion to to some default configuration. For example, following script taken from FRI interface examples shows the example motion primitives as shown in \ref{KRL-sample}.
-
-\begin{lstlisting}[label=KRL-sample,caption=KRL code]
-	INI
-	PTP HOME ; go to HOME joint configuration
-	LIN P1   ; linear motion to point P1
-	LIN P2	 ; linear motion to point P1
-\end{lstlisting}
-
-In \cite{leidner2017cognitive}, Leidner presented a representation in the form of action templates describing robot action using symbolic representations and geometric process model as shown in \ref{a-template}.  
-
-\begin{lstlisting}[label=a-template,caption=Action Template: \_object.pick]
-I Symbolic Representation 
-
-'''
-(:action _object.pick: 
-	:parameters (?o - _object ?m - _manipulator ?s - _surface) 
-	:precondition (and(free ?m) (on ?o ?s)) 
-	:effect (and(bound ?o ?m) (not(free ?m)) (not(on ?o ?s)))
-) 
-''' 
-
-II Geometric Representation
-
-def pick(self, manipulator, surface):
-	''' approach, grasp, and lift an object from a surface '''
-
-	graspset = odb.get_property(self.type, 'graspset', manipulator) 
-	for grasp_candidate in graspset: 
-		if grasp_candidate in self.history: 
-		continue
-		self.history.append(candidate) 
-		grasp = grasp_candidate 
-		break
-
-		if grasp is None: 
-			raise RuntimeError('no more alternatives')
-		else: 
-			self.grasp = grasp
-	operations = [
-		('move_hand', manipulator, g.approach_grasp), 
-		('plan_to_frame', manipulator, g.approach_frame, self.frame), ('plan_to_frame', manipulator, g.grasp_frame, self.frame), 
-		('bind', manipulator, self.name), 
-		('move_hand', manipulator, g.pre_grasp), 
-		('move_hand', manipulator, g.grasp), 
-		('move_straight', manipulator, txyz(0, 0, 0.1))
-	] 
-return operations
-\end{lstlisting}
-
-iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering robot model and provided constraints in the environment. 
 
 
 \chapter{Proposed Solution}
@@ -199,6 +189,12 @@ assist_human_to_carry
 
 Above task specification has the parameters which needs to be tuned either manually or automatically. These parameters will be tuned with model based RL.
 
+\begin{figure}[!h]
+	\center{\includegraphics[width=\textwidth]
+		{images/composition.png}}
+	\caption{\label{fig:composition} Composition}
+\end{figure}
+Above figure shows the composition of the framework.
 \chapter{Project Plan}
 
 \section{Work Packages}
