@@ -6,6 +6,18 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{booktabs}
+
+\usepackage{lipsum}
+\usepackage{array}
+\usepackage{makecell}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+\renewcommand\cellgape{\Gape[4pt]}
+
+
 
 \usepackage{xcolor}
 \usepackage{listings}
@@ -38,23 +50,18 @@
 
 \pagestyle{plain}
 
-\chapter{Misc}
-\begin{itemize}
-	\item Search predictive power of RL
-	\item application of predictive power RL 
-\end{itemize}
-
 \chapter{Introduction}
 Most of the real world robotic manipulation task present the need for compliant manipulation, where robot needs to respond to the contact forces while executing the task. Classical planning and control algorithm fail to perform satisfactorily due to the lack of precise model of contact forces and high computational complexity. Various approaches have been proposed to learn compliant manipulation skills with help of Reinforcement Learning (RL). RL, in theory, is very promising when it comes to learn intelligent behaviors in complex environment with high dimensions. But it requires high number of interactions with environment. In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. Model based RL provide the solution to the problem of required high number of interactions with the environment by modeling some part of environment and motions policy. 
 
-On the other hand, task specification approaches like iTasc rely on instantaneous task specification in task frame where constraint on motion are specified in each direction. Such approaches are more practical because of less number of robot interactions and deterministic nature. But some parameters in this case need to be tuned manually which is tedious task and require number of human interventions. 
-Kalakrishnan et. al. in \cite{kalakrishnan2011learning} propose a control algorithm by joint RL with intelligent control which learns force policy to open door on top of the specified motion for unlatching and opening opening operation.
-We propose to extend above mentioned work by using task specification like iTask and using RL for searching parameters good enough for executing the task. Our approach combines the features from model based manipulation solutions and RL. We propose to bring together the feature of deterministic solution from model based control solutions and self learning capability from RL in one solution.  
+On the other hand, task specification approaches, proposed in \cite{leidner2017cognitive,mason1981compliance,bruyninckx1996specification} rely on instantaneous task specification in task frame where constraint on motion are specified in each direction. Such approaches are more practical because of their deterministic nature which can be used for ensuring safe robot operation. But some parameters used in task specification need to be tuned manually which is tedious task and require number of human interventions. Moreover, sometimes, the task is too complex to be specified fully using task specification. 
+
+Kalakrishnan et. al. in \cite{kalakrishnan2011learning} propose a control algorithm by joining reinforcement learning with intelligent control which learns force policy to open door on top of the specified motion for unlatching and opening door operation.
+We propose to extend above mentioned work by using task specification approaches and using reinforcement learning for searching parameters good enough for executing the task. Our approach combines the features from model based manipulation solutions and reinforcement learning. We propose to bring together the feature of deterministic solution from model based control solutions and self learning capability from reinforcement learning in one solution.  
 
 
 \section{Problem Statement}
 \begin{itemize}
-    \item We propose to create a framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
+	\item To solve the problem of compliant manipulation by using the available knowledge about the task and using reinforcement learning for finding good enough policy.  
     \item We will evaluate our approach based by learning a demo task of opening door. We will evaluate it on the basis of number of interactions needed with environment, deterministic .
 \end{itemize}
 
@@ -63,10 +70,10 @@ We propose to extend above mentioned work by using task specification like iTask
 \section{Task specification}
 In industrial settings, task are usually specified in the form of sequence of primitives \cite{leidner2017cognitive}. These primitives mostly contain point-to-point motion, motion to some default configuration and basic curves. For example, following script taken from FRI interface examples shows the example motion primitives as shown in listing \ref{KRL-sample}. Though this kind of task specification works in controlled industrial environment, it leaves very little scope for external sensory feedback and the task needs to specified in terms of positional goals.
 
-\begin{lstlisting}[label=KRL-sample,caption=KRL code]
+\begin{lstlisting}[label=KRL-sample,caption=KUKA Robot Language code]
 INI
 PTP HOME ; go to HOME joint configuration
-LIN P1   ; linear motion to point P1
+LIN P1      ; linear motion to point P1
 LIN P2	 ; linear motion to point P2
 \end{lstlisting}
 
@@ -126,19 +133,20 @@ move compliantly {
 \end{lstlisting}
 
 
-iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering provided constraints in the environment. In case of conflicting constraints, constraints are weighted in the optimization problem.  
+iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering provided constraints in the environment. In case of conflicting constraints, constraints are weighted in the optimization problem. 
 
 \chapter{Reinforcement Learning}
 
-Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior by interacting with the environment. Instead of providing a detailed hand solution, a value function provides the feedback on the task which enables agent to learn a optimal solution.  
+Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior by interacting with the environment. Instead of providing a detailed engineered solution, a value function provides the feedback on the task which enables agent to learn a optimal solution. Based on use of prior knowledge, reinforcement learning approaches are categorized in two categories namely Model based and Model free reinforcement learning.  
 
 \section{Model Free Reinforcement Learning}
 
+In model free reinforcement learning, no model of transition dynamics exist, hence optimal actions are derived by trial and error\cite{polydoros2017survey}. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of model free reinforcement learning to robotics is limited by above reason, as large number of trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming.
+
 \section{Model Based Reinforcement Learning}
+In model based  reinforcement learning, the model of transition dynamics exists. This transition model is used for deriving rewards and optimal actions. Optimal actions are derived using internal simulations reducing the number of interactions needed. This optimal policy is then executed in the environment. But this approach too heavily suffered from the accuracy of the transition dynamics model. the  can model the environment and constraints on the motion of the robot, we can drastically reduce the number of parameters to be learn to achieve the task. Use of reinforcement learning to learn these reduced number of parameters can result in near optimal policy for achieving the task.
 
-In model free reinforcement learning, an agent learns the value function for each action taken, which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming If we can model the environment and constraints on the motion of the robot, we can drastically reduce the number of parameters to be learn to achieve the task. Use of reinforcement learning to learn these reduced number of parameters can result in near optimal policy for achieving the task. Manipulation tasks imply complex contact interactions with an unstructured environment and require a controller that is able to handle force interactions in a meaningful way \cite{kalakrishnan2011learning}. planning algorithms would require precise dynamics models of the resulting contact interactions. These models are usually unavailable, or so im- precise that the generated plans are unusable\cite{kalakrishnan2011learning}. 
-
-\section{Door Opening}
+\section{Door Opening Task}
 
 Opening door is one the most important task for service and rescue robots. Number of studies have been conducted to investigate this challenging problem using different techniques. Number of approaches rely on detail geometric modeling of the door and analytical trajectory generation. Nagatani et.al. \cite{nagatani1995experiment} presented an early approach for opening door by modeling the geometry of the door and then synthesizing trajectory to open door by considering geometrical constraints. To cope with the errors in position control of the early days manipulator used in the experiment, they used a force torque sensor module to achieve compliance with the environment. But this approach highly relies on correct geometric model and accurate execution of designed trajectories.
 
@@ -146,10 +154,17 @@ Approaches presented in \cite{levihn2014using,karayiannidis2012adaptive,niemeyer
 
 Some of the methods for door opening motor primitives like Dynamic motion primitives for generating trajectories for opening door. Disadvantage of these approaches is that we need to know the goal pose to generate trajectory hence it confines the condition of completing the task to achieving a goal pose. 
 
+\section{Vegetables Cutting Task}
+Vegetable cutting task in an interesting problem for robot manipulation considering the complexity of contact forces. Different vegetables requires different cutting forces. Also force profile changes as we cut through the vegetables, e.g. tomato requires much less force once we cut through the skin. Such a complicated force interactions are very hard to model and specified in the task specification. Reinforcement learning provides the solution by allowing robots to learn force control policy over time or phase of the cutting task.
+
+In \cite{lioutikov2016learning}, Lioutikov et al. solved the task by learning Dynamic Motion Primitives, which is a trajectory control policy. Authors does not consider the problem as compliant manipulation problem hence contact forces are not taken into account. Task is solved just by performing Cartesian trajectory, and hence requiring multiple attempts to cut through the vegetable. 
+
 
 \chapter{Proposed Solution}
 
-We plan to solve a compliant manipulation task by providing a task specification and using Reinforcement Learning algorithm for tuning the task specification parameters.
+We plan to solve a compliant manipulation task by providing a incomplete task specification and using Reinforcement Learning to determine unmodeled components in task specification.
+
+We propose to create a framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
 
 \section{Composition}
 
@@ -158,9 +173,11 @@ We plan to solve a compliant manipulation task by providing a task specification
 		{images/composition.png}}
 	\caption{\label{fig:composition} Composition}
 \end{figure}
-Above figure shows the composition of the framework.
+Above figure shows the composition of the proposed solution.
 
 \section{Task Specification}
+We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modification considering limitation on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
+
 Examples of task specification: 
 \begin{lstlisting}[label=open_door_ts,caption=Task specification for opening door]
 open_door
@@ -168,12 +185,12 @@ open_door
 	with task frame directions
 	xt: force 0 N
 	yt: force 0 N
-	zt: force f($\Theta$(environment, robot, task)) N
+	zt: force f(environment, robot, task) N
 	axt: force 0 Nmm
 	ayt: force 0 Nmm
 	azt: force 0 Nmm
-	max_acc = $a_{max}$ m/ss
-	max_dec = $a_{dec}$ m/ss
+	max_acc = a_max m/ss
+	max_dec = a_dec m/ss
 }until(g(...))
 
 \end{lstlisting}
@@ -186,37 +203,49 @@ cut_vegetables
 	with task frame directions
 	xt: velocity v(t) m/s
 	yt: force 0 N
-	zt: force f($\Theta$(environment, robot, task)) N
+	zt: force f(environment, robot, task) N
 	axt: force 0 Nmm
 	ayt: force 0 Nmm
 	azt: force 0 Nmm
-	max_acc = $a_{max}$ m/ss
-	max_dec = $a_{dec}$ m/ss
+	max_acc = a_max m/ss
+	max_dec = a_dec m/ss
 }until(g(...))
 
 \end{lstlisting}
 
-Above task specification has the parameters which needs to be tuned either manually or automatically. These parameters will be tuned with model based RL.
+Above task specification has the parameters which needs to be tuned either manually or automatically. These parameters will be tuned with reinforcement learning.
+
+\section{Reinforcement Learning Algorithm}
+
+
 
 \chapter{Project Plan}
 
-\section{Work Packages}
-The bare minimum will include the following packages:
-\begin{enumerate}
-    \item[WP1] Literature search
-    \item[WP2] Design of methodology and implementation
-    \item[WP3] Experiments
-    \item[WP4] Project report
-\end{enumerate}
+\section{Work Packages and Milestones}
 
-\section{Milestones}
-\begin{enumerate}
-    \item[M1] Literature search
-    \item[m2] Design of methodology and implementation
-    \item[M2] Experimental setup
-    \item[M3] Experimental analysis
-    \item[M4] Report submission
-\end{enumerate}
+\begin{tabular}{|c|c|c|}
+
+	\hline
+	\multicolumn{2}{|c|}{\thead{Work Packages}} & \thead{Targeted date} \\
+	\hline
+	WP01 & Literature search & 10-05-2019 \\
+	WP02 & Analysis of state of the art &  \\
+	\textit{MS01} & \textit{Documentation of the state of the art} &  \\
+	\hline 
+	WP03 & Modeling demo tasks using task specification approach &  20-06-2019\\ 
+	WP04 & Design and implementation of the robot controller &   \\
+	\textit{MS02} & \textit{Implementing task specification approach for door opening} &  \\
+	\hline
+	WP05 & Integrating RL algorithm in task specification & 30-07-2019 \\ 
+	WP06 & Design and implementation of RL algorithm &   \\
+	\textit{MS03} & \makecell{\textit{Implementing task specification approach} \\ \textit{with RL for door opening task}} &  \\
+	\hline
+	WP05 & Extending implemented solution for vegetable cutting task & 10-09-2019 \\ 
+	WP06 & Experimental evaluation of implemented algorithms &  \\
+	\textit{MS03} & \makecell{\textit{Implementing task specification approach with} \\ \textit{RL for cutting vegetable task}} &  \\
+	\hline
+\end{tabular}
+
 
 \section{Project Schedule}
 
@@ -230,19 +259,20 @@ The bare minimum will include the following packages:
 \subsection{Minimum Viable}
 
 \begin{itemize}
-    \item Survey of state of the art
-    \item Design and implementation of proposed solution
-    \item Demo of door opening task
+    \item Literature survey and analysis of the state of the art.
+    \item Design and implementation of task specification framework with reinforcement learning.
+    \item Demonstration of task specification framework for door opening task without using reinforcement learning.
 \end{itemize}
 
 \subsection{Expected}
 \begin{itemize}
-    \item Demo of door opening task with RL
+    \item Demonstration of task specification framework with reinforcement learning for door opening task.
 \end{itemize}
 
 \subsection{Desired}
 \begin{itemize}
-    \item Demo of vegetable cutting task with RL
+	\item Extending proposed approach for cutting vegetable task.
+    \item Demonstration of task specification framework with reinforcement learning for door opening task.
 \end{itemize}
 
 
