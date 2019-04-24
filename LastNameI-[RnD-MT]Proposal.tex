@@ -237,7 +237,7 @@ As already discussed, \begin{enumerate}
 \end{enumerate}
 Both of the above mentioned problems can be tackled by reinforcement learning. In first case, where the parameterization is possible, model based RL methods can be used for searching near optimal model parameters. Then policy can be derived by methods mentioned in section \ref{mod-RL} and in \cite{polydoros2017survey}. It is even possible to specify a engineered policy which uses the learned parameters.
 
-Tasks where policy parameterization is not possible, model based RL can be used directly to learn a generic parametrized policy by using methods like \textit{Gradient-based approaches, Sampling based approaches, Information theory methods, Evolutionary computation, etc}\cite{polydoros2017survey}. 
+Tasks where policy parameterization is not possible, model based RL can be used directly to learn a generic parameterized policy by using methods like \textit{Gradient-based approaches, Sampling based approaches, Information theory methods, Evolutionary computation, etc}\cite{polydoros2017survey}. 
 
 In our case, we plan to represent control policy in terms of weighted Gaussian functions similar as in \cite{nemec2017door}. We plan to use Policy Improvement with Path Integral ($\text{PI}^{2}$) algorithm\cite{theodorou2010learning} for optimizing the policy parameters. ($\text{PI}^{2}$) is a sampling based algorithm which uses zero mean Gaussian noise to generate new parameters.    
 
@@ -260,7 +260,7 @@ For manipulators which don't have internal torque controllers, but are equipped 
 \end{align}   
 Where, $v$ is velocity vector of end effector.
 \chapter{Project Plan}
-
+Project plan for this master thesis is as follows:
 \section{Work Packages and Milestones}
 
 \begin{tabular}{|c|c|c|}
@@ -292,6 +292,7 @@ Where, $v$ is velocity vector of end effector.
 
 
 \section{Deliverables}
+Deliverables of this project are as follows: 
 \subsection{Minimum Viable}
 
 \begin{itemize}
@@ -308,7 +309,7 @@ Where, $v$ is velocity vector of end effector.
 \subsection{Desired}
 \begin{itemize}
 	\item Extending proposed approach for cutting vegetable task.
-    \item Demonstration of task specification framework with reinforcement learning for door opening task.
+    \item Demonstration of task specification framework with reinforcement learning for vegetable cutting task.
 \end{itemize}
 
 
