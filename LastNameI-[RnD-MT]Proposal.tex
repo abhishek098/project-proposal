@@ -39,7 +39,7 @@
 
 \title{Compliant Manipulation with Task Specification and Reinforcement Learning}
 \author{Abhishek Padalkar}
-\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Second Supervisor \\Sven Schneider}
+\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Prof. Dr.-Ing. Gerhard K. Kraetzschmar \\Sven Schneider}
 \date{\today}
 
 % \thirdpartylogo{path/to/your/image}
@@ -61,17 +61,19 @@ We propose to extend above mentioned work by using task specification approach a
 
 \section{Problem Statement}
 \begin{itemize}
-	\item To solve the problem of compliant manipulation where complete model of the task,and environment is not available.
+	\item To develop a learning based approach for achieving compliant manipulation that allows to exploit partial/incomplete models
+	of the task and the environment.
 	\item We plan to solve above problem by dividing the problem into two subproblems:
 	\begin{itemize}
 		\item Model the available knowledge about task and environment using existing task specification framework.
-		\item Use reinforcement learning for parameter search or policy search which account for the unavailable knowledge os the task and environment.
+		\item Use reinforcement learning for parameter search or policy search which account for the unmodeled knowledge os the task and environment.
 	\end{itemize}
-    \item We will evaluate our approach by learning a demo tasks of 
+    \item We will demonstrate our approach by learning a demo tasks of 
     \begin{itemize}
     	\item Opening door,
+    	\item Wiping table,
     	\item Cutting vegetables.
-    \end{itemize} 
+    \end{itemize}
 \end{itemize}
 
 
@@ -146,7 +148,7 @@ iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, dec
 
 \chapter{Reinforcement Learning}
 
-Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior by interacting with the environment. Instead of providing a detailed engineered solution, a value function provides the feedback on the task which enables agent to learn a optimal solution. Based on use of prior knowledge, reinforcement learning approaches are categorized in two categories namely Model based and Model free reinforcement learning.  
+Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior by interacting with the environment. Instead of providing a detailed engineered solution, a reward function provides the feedback on the task which enables agent to learn a optimal solution. Based on use of prior knowledge, reinforcement learning approaches are categorized in two categories namely Model based and Model free reinforcement learning.  
 
 \section{Model Free Reinforcement Learning}
 
