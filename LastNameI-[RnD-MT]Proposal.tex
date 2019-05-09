@@ -63,10 +63,10 @@ We propose to extend above mentioned work by using task specification approach a
 \begin{itemize}
 	\item To develop a learning based approach for achieving compliant manipulation that allows to exploit partial/incomplete models
 	of the task and the environment.
-	\item We plan to solve above problem by dividing the problem into two subproblems:
+	\item We plan to solve above problem by dividing the problem into two sub-problems:
 	\begin{itemize}
 		\item Model the available knowledge about task and environment using existing task specification framework.
-		\item Use reinforcement learning for parameter search or policy search which account for the unmodeled knowledge os the task and environment.
+		\item Use RL for learning gradually more complete and robust action modelsfor compliant and repetitive manipulation tasks.
 	\end{itemize}
     \item We will demonstrate our approach by learning a demo tasks of 
     \begin{itemize}
@@ -152,16 +152,12 @@ Ideally, using reinforcement learning, an agent can find an optimal or near opti
 
 \section{Model Free Reinforcement Learning}
 
-In model free reinforcement learning, no model of transition dynamics exist, hence rewards and optimal actions are derived by trial and error\cite{polydoros2017survey}. 
-
-
-
-Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Moreover, traditional RL methods utilize discrete state/action representation, which results into huge state-action space\cite{nemec2017door}. Application of model free reinforcement learning to robotics is limited by above reason, as large number of trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming.
+In model free reinforcement learning, no model of transition dynamics exist, hence rewards and optimal actions are derived by trial and error\cite{polydoros2017survey}. Most of these trials are conducted in simulated environment. Hence the accuracy of simulation of the environment has significant impact on  the policy learned by the RL algorithm. The policy needs to be fine tuned in actual environment to compensate for the inaccurate or partially complete simulation.
 
 \section{Model Based Reinforcement Learning} \label{mod-RL}
-In model based  reinforcement learning, the model of transition dynamics exists. This transition model is used for deriving rewards and optimal actions. Optimal actions are derived using internal simulations. This optimal policy is then executed in the environment. But this approach too heavily suffers from the accuracy of the transition dynamics model.
+In model based  reinforcement learning, the model of transition dynamics is learned. This transition model is used for deriving rewards and optimal actions. Optimal actions are derived using internal simulations. This optimal policy is then executed in the environment. But this approach too heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
 
-Nemec et al. use reinforcement learning for learning force control policy for opening door\cite{nemec2017door}. They take into account the constraints on the door motion and cosed kinematic chain resulting from a firm grasp of robot hand on the door handle. While opening the door in such configuration, high internal forces are generated in the direction where motion is not possible. They use this knowledge to learn a compliant force control policy. Our approach is motivated by this work of Nemec et al.\cite{nemec2017door}. We try to formalize constraints in terms of already existing task specification methods, which can be generalized to more number of compliant manipulation tasks. 
+Nemec et al. use reinforcement learning for learning force control policy for opening door\cite{nemec2017door}. They take into account the constraints on the door motion and closed kinematic chain resulting from a firm grasp of robot hand on the door handle. While opening the door in such configuration, high internal forces are generated in the direction where motion is not possible. They use this knowledge to learn a compliant force control policy. Our approach is motivated by this work of Nemec et al.\cite{nemec2017door}. We try to formalize constraints in terms of already existing task specification methods, which can be generalized to more number of compliant manipulation tasks. 
 
 \section{Door Opening Task}
 
@@ -191,8 +187,8 @@ We plan to solve a compliant manipulation task by providing a incomplete task sp
 Above figure shows the composition of the proposed solution.
 
 \section{Task Specification}
-We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modification considering limitation on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
-\newpage
+We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modifications considering limitation on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
+
 \textbf{Examples of task specification:} 
 \begin{lstlisting}[label=open_door_ts,caption=Task specification for opening door]
 open_door
@@ -214,7 +210,6 @@ In above mentioned door opening task, task is represented in door frame where z-
 
 
 In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and time parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. 
-
 \newpage
 \begin{lstlisting}[label=cut_vegies,caption=Task specification for cutting vegetables]
 
@@ -241,9 +236,9 @@ As already discussed, \begin{enumerate}
 	\item Task specification approaches are reliable but they need manual tuning of many parameters
 	\item Sometimes force interactions in compliant manipulation tasks are so complex that parameterization of task and force control policy is not possible. 
 \end{enumerate}
-Both of the above mentioned problems can be tackled by reinforcement learning. In first case, where the parameterization is possible, model based RL methods can be used for searching near optimal model parameters. Then policy can be derived by methods mentioned in section \ref{mod-RL} and in \cite{polydoros2017survey}. It is even possible to specify a engineered policy which uses the learned parameters.
+Both of the above mentioned problems can be tackled by reinforcement learning. In first case, where the model parameterization is possible, model based RL methods can be used for searching near optimal model parameters. Then policy can be derived by optimization methods. It is even possible to specify a engineered policy which uses the learned parameters.
 
-Tasks where policy parameterization is not possible, model based RL can be used directly to learn a generic parameterized policy by using methods like \textit{Gradient-based approaches, Sampling based approaches, Information theory methods, Evolutionary computation, etc}\cite{polydoros2017survey}. 
+Tasks where model parameterization is not possible, model free RL can be used directly to learn a generic parameterized policy. 
 
 In our case, we plan to represent control policy in terms of weighted Gaussian functions similar as in \cite{nemec2017door}. We plan to use Policy Improvement with Path Integral ($\text{PI}^{2}$) algorithm\cite{theodorou2010learning} for optimizing the policy parameters. ($\text{PI}^{2}$) is a sampling based algorithm which uses zero mean Gaussian noise to generate new parameters.    
 
@@ -256,15 +251,23 @@ We propose to use robot specific impedance controller for controlling the robot.
 \end{equation}
 
 Where,
-$\tau_{cmd}$ is commanded joint torque, $J$ is jacobian of manipulator, $K_{c}$ is spring constant or stiffness constant, $x_{FRI}$ is commanded Cartesian position, $x_{msr}$ is current measured Cartesian position, $d_{c}$ is Cartesian normalized damping parameter, $F_{FRI}$ is commanded Cartesian force vector. The terms for the damping design $D(d_{c})$ and the dynamic model $f_{dynamics}(q, \dot{q}, \ddot{q})$ are taken care of in the KUKA motion
+$\tau_{cmd}$ is commanded joint torque, $J$ is Jacobian of manipulator, $K_{c}$ is spring constant or stiffness constant, $x_{FRI}$ is commanded Cartesian position, $x_{msr}$ is current measured Cartesian position, $d_{c}$ is Cartesian normalized damping parameter, $F_{FRI}$ is commanded Cartesian force vector. The terms for the damping design $D(d_{c})$ and the dynamic model $f_{dynamics}(q, \dot{q}, \ddot{q})$ are taken care of in the KUKA motion
 kernel.   
 
-For manipulators which don't have internal torque controllers, but are equipped with the wrist force-torque sensors, impedance control can be achieved by a linear PID feedback controller which in turn controls velocity of end effector to control force and torque at end effector. Here the feedback is force and torque measurements by wrist force torque sensor. Such controller can be given by equation below:
+For manipulators which don't have internal torque controllers, but are equipped with the wrist force-torque sensors, impedance control can be achieved by a linear PID feedback controller which in turn controls velocity of end effector to control force and torque at end effector. Here the feedback is force and torque measurements by wrist force torque sensor. Such force torque controller can be given by equation below:
 \begin{align}
 	v =& P \cdot f_{e} + I \cdot \int f_{e} + D \cdot \dot{f_{e}} \\
 	f_{e} =& f_{desired} - f_{measured}
 \end{align}   
 Where, $v$ is velocity vector of end effector.
+
+And the Impedance Controller can be given by following equation:
+\begin{align}
+	f_{desired} = K(P_{d} - P_{m}) + D_{i}(\dot{P_{m}})
+\end{align}
+
+
+
 \chapter{Project Plan}
 Project plan for this master thesis is as follows:
 \section{Work Packages and Milestones}
