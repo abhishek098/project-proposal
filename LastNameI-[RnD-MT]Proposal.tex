@@ -66,7 +66,8 @@ We propose to extend above mentioned work by using task specification approach a
 	\item We plan to solve above problem by dividing the problem into two sub-problems:
 	\begin{itemize}
 		\item Model the available knowledge about task and environment using existing task specification framework.
-		\item Use RL for learning gradually more complete and robust action modelsfor compliant and repetitive manipulation tasks.
+		\item Use RL for learning gradually more complete and robust action models
+for compliant and repetitive manipulation tasks.
 	\end{itemize}
     \item We will demonstrate our approach by learning a demo tasks of 
     \begin{itemize}
@@ -148,8 +149,21 @@ iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, dec
 
 \chapter{Reinforcement Learning}
 
-Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior by interacting with the environment. Instead of providing a detailed engineered solution, a reward function provides the feedback on the task which enables agent to learn a optimal solution. Based on deployment of model of the environment, reinforcement learning approaches are categorized in two categories namely Model based and Model free reinforcement learning. 
+Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior for a given reward function, by interacting with the environment. Instead of providing a detailed engineered solution, a reward function provides the feedback on the task which enables agent to learn a optimal solution.  
 
+\section{Taxonomy in RL}
+
+\textbf{Policy:}
+A policy is a mapping from perceived states of the environment to actions to be taken when in those states. \\
+\textbf{Model:}
+Model mimics the behavior of the environment which allows agent to infer how environment will behave in response to a particular action. \\
+\textbf{Value Function}
+A value function specifies what is good in the long run. Roughly speaking, the value of a state is the total amount of reward an agent can expect to accumulate over the future, starting from that state. \\
+\textbf{Reward Function}
+Reward function is the feedback sent to the agent by the environment. It defines the goal of reinforcement learning problem.
+
+
+Based on deployment of model of the environment, reinforcement learning approaches are categorized in two categories namely model-based and model-free reinforcement learning.
 \section{Model Free Reinforcement Learning}
 
 In model free reinforcement learning, no model of transition dynamics exist, hence rewards and optimal actions are derived by trial and error\cite{polydoros2017survey}. Most of these trials are conducted in simulated environment. Hence the accuracy of simulation of the environment has significant impact on  the policy learned by the RL algorithm. The policy needs to be fine tuned in actual environment to compensate for the inaccurate or partially complete simulation.
@@ -177,6 +191,13 @@ In \cite{lioutikov2016learning}, Lioutikov et al. solved the task by learning Dy
 
 We plan to solve a compliant manipulation task by providing a incomplete task specification and using Reinforcement Learning to determine un-modeled components in task specification. We propose to create a framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
 
+\begin{itemize}
+	\item Advantage of task specification
+	\item Reduced dimensions
+	\item scalable
+	\item roll of RL
+\end{itemize}
+
 \section{Composition}
 
 \begin{figure}[!h]
@@ -196,7 +217,7 @@ open_door
 	with task frame directions
 	xt: force 0 N
 	yt: force 0 N
-	zt: force f(environment, robot, task) N
+	zt: velocity f(environment, robot, task) m/s
 	axt: force 0 Nmm
 	ayt: force 0 Nmm
 	azt: force 0 Nmm
