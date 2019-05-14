@@ -51,12 +51,11 @@
 \pagestyle{plain}
 
 \chapter{Introduction}
-Most of the real world robotic manipulation tasks present the need for compliant manipulation, where robot needs to respond to the contact forces while executing the task. Classical planning and control algorithms fail to perform satisfactorily due to the lack of precise models of contact forces and high computational complexity. Various approaches have been proposed to learn compliant manipulation skills with help of Reinforcement Learning (RL). RL is promising when it comes to learn intelligent behaviors in complex environment with high dimensions. But it requires high number of interactions with environment. In model free reinforcement learning, a agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. Model based RL provide the solution to the problem of required high number of interactions with the environment by modeling some part of environment and motions policy. 
+Most of the real world robotic manipulation tasks present the need for compliant manipulation, where robot needs to respond to the contact forces while executing the task. Classical planning and control algorithms fail to perform satisfactorily due to the lack of precise models of contact forces and high computational complexity. Various approaches have been proposed to learn compliant manipulation skills with the help of Reinforcement Learning (RL). RL is promising when it comes to learn intelligent behaviors in complex environments with high dimensions. But it requires high number of interactions with environment. In model-free reinforcement learning, an agent learns the skills by exploring the environment and adopting the parameters which governs the trajectory of the agent in the environment. Learning all the parameters of the policy can be computationally very expensive and might require large number of interactions with the environment. Application of RL to robotics is limited by above reason because large number trials causes wear and tear in mechanical parts and even damage to robot and the environment apart from being time consuming. Model based RL provide the solution to the problem of required high number of interactions with the environment by modeling some part of environment and motions policy. 
 
-On the other hand, task specification approaches, proposed in \cite{leidner2017cognitive,mason1981compliance,bruyninckx1996specification} rely on instantaneous task specification in task frame where constraint on motion are specified in each direction. Such approaches are more practical because of their deterministic nature which can be used for ensuring safe robot operation. But some parameters used in task specification need to be tuned manually which is tedious task and require number of human interventions. Moreover, sometimes, the task is too complex to be specified fully using task specification. 
+On the other hand, task specification approaches, proposed in \cite{leidner2017cognitive,mason1981compliance,bruyninckx1996specification} rely on instantaneous task specifications in task frames where constraint on motion are specified in each direction. Such approaches are more practical because of their deterministic nature which can be used for ensuring the robot's safe operation. But some parameters used in task specification need to be tuned manually which is a tedious task and requires number of human interventions. Moreover, sometimes, the task is too complex to be specified fully using task specification. 
 
-Nemec et al. in \cite{nemec2017door} propose a control algorithm by joining reinforcement learning with intelligent control which learns force policy to open door on top of the specified motion for unlatching and opening door operation.
-We propose to extend above mentioned work by using task specification approach and using reinforcement learning for searching parameters good enough for executing the task maximizing given reward function. Our approach combines the features from model based manipulation solutions and reinforcement learning. We propose to bring together the feature of deterministic solution from model based control solutions and self learning capability from reinforcement learning in one solution.  
+Nemec et al. in \cite{nemec2017door} propose a control algorithm by joining reinforcement learning with intelligent control which learns force policy to open door on top of the specified motion for unlatching and opening door operation. We propose to extend above mentioned work by using task specification approach and using reinforcement learning for searching parameters good enough for executing the task maximizing a given reward function. Our approach combines the features from model based manipulation solutions and reinforcement learning. We propose to bring together the feature of deterministic solution from model based control solutions and self learning capability from reinforcement learning in one solution.  
 
 
 \section{Problem Statement}
@@ -80,7 +79,7 @@ for compliant and repetitive manipulation tasks.
 
 \chapter{Related Work}
 \section{Task specification}
-In industrial settings, task are usually specified in the form of sequence of primitives \cite{leidner2017cognitive}. These primitives mostly contain point-to-point motion, motion to some default configuration and basic curves. For example, following script taken from FRI interface examples shows the example motion primitives as shown in listing \ref{KRL-sample}. Though this kind of task specification works in controlled industrial environment, it leaves very little scope for external sensory feedback and the task needs to specified in terms of positional goals.
+In industrial settings, task are usually specified in the form of sequence of primitive motions\cite{leidner2017cognitive}. These motion primitives mostly contain point-to-point motion, motion to some default configuration and basic curves. For example, following script taken from KRL interface examples presents the motion primitives as shown in listing \ref{KRL-sample}. Though this kind of task specification works in controlled industrial environment, it leaves very little scope for external sensory feedback and the task needs to specified in terms of positional goals.
 
 \begin{lstlisting}[label=KRL-sample,caption=KUKA Robot Language code]
 INI
@@ -89,7 +88,7 @@ LIN P1      ; linear motion to point P1
 LIN P2	 ; linear motion to point P2
 \end{lstlisting}
 
-In \cite{leidner2017cognitive}, Leidner presented a representation in the form of action templates describing robot action using symbolic representations and geometric process model as shown in listing \ref{a-template}.  Symbolic representation of the task in PDDL allows classical planners to consider the action in the high level abstract task plan and geometric representation of the task specifies the sequence of low level movement sequences needed to complete the action. Here, geometric representation only specifies discrete motion primitives and not the parametric representation of the motion primitives. Actual parameterization and control is left to low level control module.   
+In \cite{leidner2017cognitive}, Leidner presented a representation in the form of action templates describing robot action using symbolic representations and geometric process model as shown in listing \ref{a-template}.  Symbolic representation of the task in PDDL allows classical planners to consider the action in the high level abstract task plan and geometric representation of the task specifies the sequence of low level movement sequences needed to complete the action. Here, geometric representation only specifies high level atomic motion primitives (e.g. \textit{move\_hand, move\_straight}) and not the parametric representation of the motion primitives. Actual parameterization and control is left to low level control module.   
 
 \begin{lstlisting}[label=a-template,caption=Action Template: \_object.pick]
 I Symbolic Representation 
@@ -130,8 +129,7 @@ operations = [
 return operations
 \end{lstlisting}
 
-In \cite{mason1981compliance}, Mason et. al. presented the idea behind \textit{Task Frame Formalization - TFF} for representing compliant task. Using hybrid control, various control modes are assigned to each axis of the \textit{task frame} or \textit{compliance frame}\cite{nagele2018prototype}. Listing \ref{tff} shows Open Door task taken from \cite{bruyninckx1996specification}. This framework doesn't consider the specification of task or motion quality related parameters like velocity damping or instantaneous sensory inputs. It also specify action to be executed \textit{compliantly} but does not specify the how? 
-
+In \cite{mason1981compliance}, Mason et. al. presented the idea behind \textit{Task Frame Formalization - (TFF)} for specifying compliant task. Using hybrid control, various control specifying modes are assigned to each axis of the \textit{task frame} or \textit{compliance frame}\cite{nagele2018prototype}. Listing \ref{tff} shows Open Door task taken from \cite{bruyninckx1996specification}. This framework doesn't consider the specification of task quality or motion quality related parameters like velocity damping or instantaneous sensory inputs. 
 \begin{lstlisting}[label=tff,caption=Task Specification using TFF: Open Door]
 move compliantly {
 	with task frame directions
@@ -189,8 +187,10 @@ In \cite{lioutikov2016learning}, Lioutikov et al. solved the task by learning Dy
 
 \chapter{Proposed Solution}
 
-We plan to solve a compliant manipulation task by providing a incomplete task specification and using Reinforcement Learning to determine un-modeled components in task specification. We propose to create a framework based on task specification and model based reinforcement learning to solve the problem of compliant manipulation for given task in deterministic manner with fewer number of interactions with environment.
+We plan to solve a compliant manipulation tasks by providing a incomplete task specifications and using Reinforcement Learning to determine un-modeled components in task specifications. Provided task specification will greatly reduce the number of dimensions in reinforcement learning problem.   
 
+
+\textbf{Advantages of proposed solution:}
 \begin{itemize}
 	\item Advantage of task specification
 	\item Reduced dimensions
@@ -210,7 +210,9 @@ Above figure shows the composition of the proposed solution.
 \section{Task Specification}
 We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modifications considering limitation on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
 
-\textbf{Examples of task specification:} 
+\subsection{Examples of task specification:} 
+\subsubsection{Opening door}
+
 \begin{lstlisting}[label=open_door_ts,caption=Task specification for opening door]
 open_door
 {
@@ -222,27 +224,29 @@ open_door
 	ayt: force 0 Nmm
 	azt: force 0 Nmm
 	max_acc = a_max m/ss
-	max_dec = a_dec m/ss
+	max_dec = d_max m/ss
 }until(g(...))
 
 \end{lstlisting}
 
+To understand the proposed solution, let's have detailed look at task of opening door. Door opening can be solved by applying velocity in tangential direction of door radius until it is opened till certain angle (different metrics of opened door can be brought in, here specified angle is chosen as it is generalizable for different situations). Robot arm needs to be compliant in other dimensions.
+Task specification given in Listing \ref{open_door_ts}, reflects this discussion. To open the door smoothly, acceleration and deceleration should be limited. These parameters govern the trapezoidal shape of the velocity applied to door and be identified as \textit{velocity policy parameters}. These open parameters, maximum acceleration and maximum deceleration need to be tuned. Policy search methods in reinforcement learning can be deployed to find good enough parameters for maximizing a reward function which is designed to reduce the jerks in the motion and to reduce the time for opening as well.
 In above mentioned door opening task, task is represented in door frame where z-axis is perpendicular to door frame. Here, instead of specifying force in the z-direction, a constant velocity can also be specified for simplicity. But such specification can result in oscillations in case of self closing doors where initially huge amount force is required to move the door. It can be a huge problem especially when velocity control loop is running at low frequency. Parameters max\_acc and max\_dec ensure safe operation of the robot as well as quality of task.
 
 
 In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and time parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. 
-\newpage
+
 \begin{lstlisting}[label=cut_vegies,caption=Task specification for cutting vegetables]
 
 cut_vegetables
 {
 	with task frame directions
 	xt: velocity v(t) m/s
-	yt: force 0 N
+	yt: velocity 0 N
 	zt: force f(environment, robot, task, xt) N
-	axt: force 0 Nmm
-	ayt: force 0 Nmm
-	azt: force 0 Nmm
+	axt: velocity 0 Nmm
+	ayt: velocity 0 Nmm
+	azt: velocity 0 Nmm
 	max_acc = a_max m/ss
 	max_dec = a_dec m/ss
 }until(g(...))
