@@ -38,7 +38,7 @@
 	literate={\ \ }{{\ }}1	
 }
 
-\title{Compliant Manipulation with Task Specification and Reinforcement Learning}
+\title{Compliant Manipulation with Reinforcement Learning Guided by Task Specification}
 \author{Abhishek Padalkar}
 \supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Prof. Dr.-Ing. Gerhard K. Kraetzschmar \\Sven Schneider}
 \date{\today}
@@ -91,14 +91,9 @@ In \cite{leidner2017cognitive}, Leidner presented a representation in the form o
 
 \begin{lstlisting}[label=a-template,caption=Action Template: \_object.pick]
 I Symbolic Representation 
-
-'''
-(:action _object.pick: 
-:parameters (?o - _object ?m - _manipulator ?s - _surface) 
-:precondition (and(free ?m) (on ?o ?s)) 
-:effect (and(bound ?o ?m) (not(free ?m)) (not(on ?o ?s)))
-) 
-''' 
+'''(:action _object.pick: 
+...
+)'''
 
 II Geometric Representation
 
@@ -107,24 +102,7 @@ def pick(self, manipulator, surface):
 
 graspset = odb.get_property(self.type, 'graspset', manipulator) 
 for grasp_candidate in graspset: 
-if grasp_candidate in self.history: 
-continue
-self.history.append(candidate) 
-grasp = grasp_candidate 
-break
-
-if grasp is None: 
-raise RuntimeError('no more alternatives')
-else: 
-self.grasp = grasp
-operations = [
-('move_hand', manipulator, g.approach_grasp), 
-('plan_to_frame', manipulator, g.approach_frame, self.frame), ('plan_to_frame', manipulator, g.grasp_frame, self.frame), 
-('bind', manipulator, self.name), 
-('move_hand', manipulator, g.pre_grasp), 
-('move_hand', manipulator, g.grasp), 
-('move_straight', manipulator, txyz(0, 0, 0.1))
-] 
+. . .
 return operations
 \end{lstlisting}
 
@@ -334,14 +312,11 @@ Project plan for this master thesis is as follows:
 	WP06 & Design and implementation of RL algorithm &   \\
 	\textit{MS03} & \makecell{\textit{Implementing task specification approach} \\ \textit{with RL for door opening task}} &  \\
 	\hline
-	WP05 & Extending implemented solution for vegetable cutting task & 10-09-2019 \\ 
-	WP06 & Experimental evaluation of implemented algorithms &  \\
+	WP06 & Extending implemented solution for vegetable cutting task & 10-09-2019 \\ 
+	WP07 & Experimental evaluation of implemented algorithms &  \\
 	\textit{MS03} & \makecell{\textit{Implementing task specification approach with} \\ \textit{RL for cutting vegetable task}} &  \\
 	\hline
 \end{tabular}
-
-
-\section{Project Schedule}
 
 
 
