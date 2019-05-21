@@ -201,7 +201,7 @@ In \cite{lioutikov2016learning}, Lioutikov et al. solved the task by learning Dy
 
 \chapter{Proposed Solution}
 
-We plan to solve a compliant manipulation tasks by providing a incomplete task specifications and using Reinforcement Learning to determine un-modeled components in task specifications. Provided task specification will greatly reduce the number of dimensions in reinforcement learning problem. And reinforcement learning will learn the part in the task specification which is hard to model or tune.
+We plan to solve a compliant manipulation task by providing a incomplete task specification and using Reinforcement Learning to determine un-modeled components in task specification. Provided task specification will greatly reduce the number of dimensions in reinforcement learning problem. And reinforcement learning will learn the parts in the task specification which is hard to model or tune.
 
 
 
@@ -219,7 +219,7 @@ We plan to solve a compliant manipulation tasks by providing a incomplete task s
 	\item An engineered policy for control input generation can be provided whenever possible. 
 	\item Whenever it is not possible to engineer a policy, a generic policy can be used and limits on control inputs can be provided for ensuring robot's safe operation.
 	\item Open parameters in policy provided in task specification can be learned using RL algorithm, which reduces human interventions and tedious manual parameter tuning. 
-	\item This framework is scalable for various different compliant robotic tasks.  
+
 \end{itemize}
 
 \section{Composition}
@@ -252,9 +252,9 @@ open_door
 }until(g(...))
 
 \end{lstlisting}
-To understand the proposed solution, let's have detailed look at task of opening door. Door opening can be solved by applying velocity in tangential direction of door radius until it is opened till certain angle (different metrics of opened door can be brought in, here specified angle is chosen as it is generalizable for different situations). Robot arm needs to be compliant in other dimensions. Task specification given in Listing \ref{open_door_ts}, reflects this discussion. In above mentioned door opening task, task is represented in door frame where z-axis is perpendicular to the door plane. To open the door smoothly, acceleration and deceleration should be limited. These parameters govern the trapezoidal shape of the velocity applied to door and those are identified as \textit{velocity policy parameters}. These open parameters, maximum acceleration and maximum deceleration, need to be tuned. Policy search methods in reinforcement learning can be deployed to find good enough parameters for maximizing a reward function which is designed to reduce the jerks in the motion and to reduce the time for opening as well.
+To understand the proposed solution, let's have detailed look at task of opening door. Door opening can be solved by applying velocity in tangential direction of door radius until it is opened till certain angle (different metrics of opened door can be brought in, here specified angle is chosen as it is generalizable for different situations). Robot arm needs to be compliant in other dimensions. Task specification given in Listing \ref{open_door_ts}, reflects this discussion. Here, task is formalized in door frame where z-axis is perpendicular to the door plane. To open the door smoothly, acceleration and deceleration should be limited. These parameters govern the trapezoidal shape of the velocity applied to door and those are identified as \textit{velocity policy parameters}. These open parameters, maximum acceleration and maximum deceleration, need to be tuned. Policy search methods in reinforcement learning can be deployed to find good enough parameters for maximizing a reward function which is designed to reduce the jerks in the motion and to reduce the time for opening as well.
 
-In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and generic parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. The advantage of the approach is clear here: control policy in only 2 dimensions out of 6 is to be learned here because task specifications provides control model in other 4 dimensions. 
+In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and generic parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. The advantage of the approach is clear here: control policy in only 2 dimensions out of 6 is to be learned because task specifications defines control inputs in other 4 dimensions. 
 
 \begin{lstlisting}[label=cut_vegies,caption=Task specification for cutting vegetables]
 
@@ -304,14 +304,13 @@ For manipulators which don't have internal torque controllers, but are equipped 
 	v =& P \cdot f_{e} + I \cdot \int f_{e} + D \cdot \dot{f_{e}} \\
 	f_{e} =& f_{desired} - f_{measured}
 \end{align}   
-Where, $v$ is velocity vector of end effector.
+Where, $v$ is velocity vector of end-effector. $P, I, D$ are the gains in PID controller. $f_{desired}$ and $f_{measured}$ are the desired and measured force vectors respectively. 
 
 And the Impedance Controller can be given by following equation:
 \begin{align}
 	f_{desired} = K(P_{d} - P_{m}) + D_{i}(\dot{P_{m}})
 \end{align}
-
-
+Where, $K$ is stiffness, $P_{d}$ and $P_{m}$ are desired and measured positions respectively, $D_{i}$ is damping coefficient. 
 
 \chapter{Project Plan}
 Project plan for this master thesis is as follows:
