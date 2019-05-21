@@ -40,7 +40,7 @@
 
 \title{Compliant Manipulation with Reinforcement Learning Guided by Task Specification}
 \author{Abhishek Padalkar}
-\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Prof. Dr.-Ing. Gerhard K. Kraetzschmar \\Sven Schneider}
+\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Prof. Dr.-Ing. Gerhard K. Kraetzschmar \\Sven Schneider \\Matthias Nieuwenhuisen}
 \date{\today}
 
 % \thirdpartylogo{path/to/your/image}
@@ -264,31 +264,6 @@ Both of the above mentioned problems can be tackled by policy search methods in 
 Tasks where model parameterization is not possible, a generic parameterized policy can be used to learn the control policy. It is even possible to initialize this policy using learning from demonstration techniques.
 
 In our case, we plan to represent control policy in terms of weighted Gaussian functions similar as in \cite{nemec2017door}. We plan to use Policy Improvement with Path Integral ($\text{PI}^{2}$) algorithm\cite{theodorou2010learning} for optimizing the policy parameters. ($\text{PI}^{2}$) is a sampling based algorithm which uses zero mean Gaussian noise to generate new parameters.   
-
-\section{Robot Controller}
-
-We propose to use robot specific impedance controller for controlling the robot. For KUKA LWR robot this controller is already provided by the manufacturer which is stated by following equation taken from \cite{schreiber2010fast}, an official documentation for KUKA Fast Research Interface.
-
-\begin{equation}
-\tau_{cmd} = J^{T}(K_{c}(x_{FRI} - x_{msr}) + D(d_{c}) + F_{FRI}) + f_{dynamics}(q, \dot{q}, \ddot{q})
-\end{equation}
-
-Where,
-$\tau_{cmd}$ is commanded joint torque, $J$ is Jacobian of manipulator, $K_{c}$ is spring constant or stiffness constant, $x_{FRI}$ is commanded Cartesian position, $x_{msr}$ is current measured Cartesian position, $d_{c}$ is Cartesian normalized damping parameter, $F_{FRI}$ is commanded Cartesian force vector. The terms for the damping design $D(d_{c})$ and the dynamic model $f_{dynamics}(q, \dot{q}, \ddot{q})$ are taken care of in the KUKA motion
-kernel.   
-
-For manipulators which don't have internal torque controllers, but are equipped with the wrist force-torque sensors, impedance control can be achieved by a linear PID feedback controller which in turn controls velocity of end effector to control force and torque at end effector. Here the feedback is force and torque measurements by wrist force torque sensor. Such force torque controller can be given by equation below:
-\begin{align}
-	v =& P \cdot f_{e} + I \cdot \int f_{e} + D \cdot \dot{f_{e}} \\
-	f_{e} =& f_{desired} - f_{measured}
-\end{align}   
-Where, $v$ is velocity vector of end-effector. $P, I, D$ are the gains in PID controller. $f_{desired}$ and $f_{measured}$ are the desired and measured force vectors respectively. 
-
-And the Impedance Controller can be given by following equation:
-\begin{align}
-	f_{desired} = K(P_{d} - P_{m}) + D_{i}(\dot{P_{m}})
-\end{align}
-Where, $K$ is stiffness, $P_{d}$ and $P_{m}$ are desired and measured positions respectively, $D_{i}$ is damping coefficient. 
 
 \chapter{Project Plan}
 Project plan for this master thesis is as follows:
