@@ -101,7 +101,6 @@ def pick(self, manipulator, surface):
 ''' approach, grasp, and lift an object from a surface '''
 
 graspset = odb.get_property(self.type, 'graspset', manipulator) 
-for grasp_candidate in graspset: 
 . . .
 return operations
 \end{lstlisting}
@@ -122,13 +121,13 @@ move compliantly {
 
 iTaSC developed in \cite{DeSchutter-ijrr2007, DecreBruyninckxDeSchutter2013, decre09}, synthesizes control inputs based on provided task space constraints. It formulates a optimization problem considering provided constraints in the environment. In case of conflicting constraints, constraints are weighted in the optimization problem. 
 
-\chapter{Reinforcement Learning}
+\section{Reinforcement Learning}
 
 Ideally, using reinforcement learning, an agent can find an optimal or near optimal behavior for a given reward function, by interacting with the environment. Instead of providing a detailed engineered solution, a reward function provides the feedback on the task which enables agent to learn a optimal solution.  
 
 There are four major components in RL algorithm; policy, model, value function and reward function.
 
-\section{Taxonomy in RL}
+\subsection{Taxonomy in RL}
 
 \textbf{Policy:}
 A policy is a mapping from perceived states of the environment to actions to be taken when in those states. \\
@@ -144,11 +143,11 @@ A RL agent takes actions in the environment and receives feedback from the envir
 Based on deployment of model of the environment, reinforcement learning approaches are categorized in two categories namely model-based and model-free reinforcement learning.
 
 
-\section{Model Based Reinforcement Learning} \label{mod-RL}
+\subsection{Model Based Reinforcement Learning} \label{mod-RL}
 In model based  reinforcement learning, the model of state transition dynamics is learned. This transition model is used for deriving rewards and value function. Policy for taking action is then derived from the value function. Value function in its simplest form, can be a table which stores all the state and value pairs and policy can be greedy search to take the action which will take the agent to the next state with highest value. But this approach heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
 
 
-\section{Model Free Reinforcement Learning}
+\subsection{Model Free Reinforcement Learning}
 
 In model free reinforcement learning, no model of transition dynamics exist, hence value function and optimal actions are derived by trial and error\cite{polydoros2017survey}. In model free RL agent learns value function or policy or both (in actor-critic method) directly without learning model. Most of these trials are conducted in simulated environment. Hence the accuracy of simulation of the environment has significant impact on the value function and policy learned by the RL algorithm. The policy needs to be fine tuned in actual environment to compensate for the inaccurate or partially complete simulation.
 
@@ -263,8 +262,6 @@ Both of the above mentioned problems can be tackled by policy search methods in 
 
 Tasks where model parameterization is not possible, a generic parameterized policy can be used to learn the control policy. It is even possible to initialize this policy using learning from demonstration techniques.
 
-In our case, we plan to represent control policy in terms of weighted Gaussian functions similar as in \cite{nemec2017door}. We plan to use Policy Improvement with Path Integral ($\text{PI}^{2}$) algorithm\cite{theodorou2010learning} for optimizing the policy parameters. ($\text{PI}^{2}$) is a sampling based algorithm which uses zero mean Gaussian noise to generate new parameters.   
-
 \chapter{Project Plan}
 Project plan for this master thesis is as follows:
 \section{Work Packages and Milestones}
@@ -288,7 +285,7 @@ Project plan for this master thesis is as follows:
 	\hline
 	WP06 & Extending implemented solution for vegetable cutting task & 10-09-2019 \\ 
 	WP07 & Experimental evaluation of implemented algorithms &  \\
-	\textit{MS03} & \makecell{\textit{Implementing task specification approach with} \\ \textit{RL for cutting vegetable task}} &  \\
+	\textit{MS04} & \makecell{\textit{Implementing task specification approach with} \\ \textit{RL for cutting vegetable task}} &  \\
 	\hline
 \end{tabular}
 
