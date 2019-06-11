@@ -143,7 +143,7 @@ Based on deployment of model of the environment, reinforcement learning approach
 
 
 \subsection{Model Based Reinforcement Learning} \label{mod-RL}
-In model based  reinforcement learning, the model of state transition dynamics is learned. This transition model is used for deriving rewards and value function. Policy for taking action is then derived from the value function. Value function in its simplest form, can be a table which stores all the state and value pairs and policy can be greedy search to take the action which will take the agent to the next state with highest value. But this approach heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
+In model based  reinforcement learning, the model of state transition dynamics is learned. Policy for taking action is then learned by running internal simulations. Value function in its simplest form, can be a table which stores all the state and value pairs and policy can be greedy search to take the action which will take the agent to the next state with highest value. But this approach heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
 
 
 \subsection{Model Free Reinforcement Learning}
@@ -183,7 +183,7 @@ We plan to solve a compliant manipulation task by providing a incomplete task sp
 
 \textbf{The outline proposed solution:}
 \begin{itemize}
-	\item Provide task specification using TFF, which also consists of parameters for the policy for generating control input.
+	\item Provide task specification using TFF \textit{(Task Frame Formalization)}\cite{mason1981compliance}, which also consists of parameters for the policy for generating control input.
 	\item Provide policy for control command generation in the task specification (this policy can be a engineered policy for a custom solution or can be a generic parameterized policy e.g. neural network, radial basis function network, etc).
 	\item Design a reward function for the given task.
 	\item Use existing methods to adjust the parameters of the policy to maximize the reward function by carrying out trials in the environment.
@@ -191,7 +191,7 @@ We plan to solve a compliant manipulation task by providing a incomplete task sp
 
 \textbf{Advantages of proposed solution:}
 \begin{itemize}
-	\item Task specification models the available knowledge about the task which greatly reduces the dimensions of RL problem.
+	\item Task specification models the \textit{prior knowledge} about the task which greatly reduces the dimensions of RL problem.
 	\item An engineered policy for control input generation can be provided whenever possible. 
 	\item Whenever it is not possible to engineer a policy, a generic policy can be used and limits on control inputs can be provided for ensuring robot's safe operation.
 	\item Open parameters in policy provided in task specification can be learned using RL algorithm, which reduces human interventions and tedious manual parameter tuning. 
@@ -208,7 +208,7 @@ We plan to solve a compliant manipulation task by providing a incomplete task sp
 Above figure shows the composition of the proposed solution.
 
 \section{Task Specification}
-We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modifications considering limitation on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
+We propose to use approach given by Mason et al.\cite{mason1981compliance}, with further modifications considering limitations on robot and environment. These parameters will also be used for ensuring quality of the task. e.g. smoothness in opening door. Also we introduce force and velocities as functions of robot and environmental parameters and phase of the task. 
 
 \subsection{Examples of task specification:} 
 \subsubsection{Opening door}
@@ -230,7 +230,7 @@ open_door
 \end{lstlisting}
 To understand the proposed solution, let's have detailed look at task of opening door. Door opening can be solved by applying velocity in tangential direction of door radius until it is opened till certain angle (different metrics of opened door can be brought in, here specified angle is chosen as it is generalizable for different situations). Robot arm needs to be compliant in other dimensions. Task specification given in Listing \ref{open_door_ts}, reflects this discussion. Here, task is formalized in door frame where z-axis is perpendicular to the door plane. To open the door smoothly, acceleration and deceleration should be limited. These parameters govern the trapezoidal shape of the velocity applied to door and those are identified as \textit{velocity policy parameters}. These open parameters, maximum acceleration and maximum deceleration, need to be tuned. Policy search methods in reinforcement learning can be deployed to find good enough parameters for maximizing a reward function which is designed to reduce the jerks in the motion and to reduce the time for opening as well.
 
-In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and generic parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. The advantage of the approach is clear here: control policy in only 2 dimensions out of 6 is to be learned because task specifications defines control inputs in other 4 dimensions. 
+In vegetable cutting task stated in Listing \ref{cut_vegies}, task is represented in chopping board frame such that z-axis is perpendicular to the chopping board and x-axis is in cutting direction. In this task, velocity in x-axis and force in z-axis are not easy to be modeled or parameterized. Here both of these entities can be represented by and generic parameterized policy. Moreover velocity can be learned from demonstrations using methods like Dynamic Motions Primitives\cite{lioutikov2016learning}. The advantage of the approach is clear here: control policy in only 2 dimensions out of 6 is to be learned, because task specifications defines control inputs in other 4 dimensions. 
 
 \begin{lstlisting}[label=cut_vegies,caption=Task specification for cutting vegetables]
 
@@ -240,9 +240,9 @@ cut_vegetables
 	xt: velocity v(t) m/s
 	yt: velocity 0 N
 	zt: force f(environment, robot, task, xt) N
-	axt: velocity 0 Nmm
-	ayt: velocity 0 Nmm
-	azt: velocity 0 Nmm
+	axt: velocity 0 rad/s
+	ayt: velocity 0 rad/s
+	azt: velocity 0 rad/s
 	max_acc = a_max m/ss
 	max_dec = a_dec m/ss
 }until(g(...))
