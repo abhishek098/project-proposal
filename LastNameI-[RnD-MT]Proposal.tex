@@ -61,8 +61,7 @@ Nemec et al. in \cite{nemec2017door} propose a control algorithm by joining rein
 
 \section{Problem Statement}
 \begin{itemize}
-	\item To develop a learning based approach for achieving compliant manipulation that allows to exploit partial/incomplete models
-	of the task and the environment provided by the task specification.
+	\item Combining features from reinforcement learning and task specification approach to reduce the time and interactions required in reinforcement learning and reducing need for manual parameter tuning in task specification.
 	\item We plan to solve above problem by dividing the problem into two sub-problems:
 	\begin{itemize}
 		\item Model the available knowledge about task and environment using existing task specification framework.
@@ -105,7 +104,7 @@ graspset = odb.get_property(self.type, 'graspset', manipulator)
 return operations
 \end{lstlisting}
 
-In \cite{mason1981compliance}, Mason et. al. presented the idea behind \textit{Task Frame Formalization - (TFF)} for specifying compliant task. Using hybrid control, various control specifying modes are assigned to each axis of the \textit{task frame} or \textit{compliance frame}\cite{nagele2018prototype}. Listing \ref{tff} shows Open Door task taken from \cite{bruyninckx1996specification}. This framework doesn't consider the specification of task quality or motion quality related parameters like velocity damping or instantaneous sensory inputs. 
+In \cite{mason1981compliance}, Mason et al. presented the idea behind \textit{Task Frame Formalization - (TFF)} for specifying compliant task. Using hybrid control, various control specifying modes are assigned to each axis of the \textit{task frame} or \textit{compliance frame}\cite{nagele2018prototype}. Listing \ref{tff} shows Open Door task taken from \cite{bruyninckx1996specification}. This framework doesn't consider the specification of task quality or motion quality related parameters like velocity damping or instantaneous sensory inputs. 
 \begin{lstlisting}[label=tff,caption=Task Specification using TFF: Open Door]
 move compliantly {
 	with task frame directions
