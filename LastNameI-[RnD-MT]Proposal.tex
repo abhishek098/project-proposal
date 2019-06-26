@@ -40,7 +40,7 @@
 
 \title{Compliant Manipulation with Reinforcement Learning Guided by Task Specification}
 \author{Abhishek Padalkar}
-\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\Prof. Dr.-Ing. Gerhard K. Kraetzschmar \\Sven Schneider \\Matthias Nieuwenhuisen}
+\supervisors{Prof. Dr. Paul G. Pl\"{o}ger\\ $<$ Second Supervisor $>$ \\Sven Schneider \\Matthias Nieuwenhuisen}
 \date{\today}
 
 % \thirdpartylogo{path/to/your/image}
@@ -144,7 +144,7 @@ Based on deployment of model of the environment, reinforcement learning approach
 
 
 \subsection{Model Based Reinforcement Learning} \label{mod-RL}
-In model based  reinforcement learning, the model of state transition dynamics is learned. This transition model is used for deriving rewards and value function. Policy for taking action is then derived from the value function. Value function in its simplest form, can be a table which stores all the state and value pairs and policy can be greedy search to take the action which will take the agent to the next state with highest value. But this approach heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
+In model based  reinforcement learning, the model of state transition dynamics is learned from the data. This transition model is used for learning policy by running internal simulations of robots's dynamics and environment. Value function in its simplest form, can be a table which stores all the state and value pairs and policy can be greedy search to take the action which will take the agent to the next state with highest value. But this approach heavily suffers from the accuracy of the transition dynamics model. This model is often learned in simulated environment, hence accuracy of simulation affects the accuracy of model being learned. So in short, we first model the world and use RL algorithms to learn this model of the world. Instead of this we can provide a incomplete parameterized model of the world and use RL to tune it.  
 
 
 \subsection{Model Free Reinforcement Learning}
